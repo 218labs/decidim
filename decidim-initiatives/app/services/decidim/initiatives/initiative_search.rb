@@ -65,7 +65,9 @@ module Decidim
 
       def search_author
         if author == "myself" && options[:current_user]
-          query.where(decidim_author_id: options[:current_user].id)
+          co_authoring_initiative_ids = Decidim::InitiativesCommitteeMember.excluding_author.where(decidim_users_id: 2).pluck(:decidim_initiatives_id)
+
+          query.where(decidim_author_id: options[:current_user].id).or(query.where(id: co_authoring_initiative_ids))
         else
           query
         end
